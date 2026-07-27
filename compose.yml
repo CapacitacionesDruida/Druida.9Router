@@ -1,0 +1,55 @@
+# Compatible con Docker (docker compose) y Podman (podman compose / podman-compose).
+# No usa ninguna caracteristica exclusiva de un motor: Compose Spec puro.
+name: druida-9router
+
+services:
+  9router:
+    image: decolua/9router:latest
+    container_name: 9router
+    restart: unless-stopped
+    # Por defecto solo accesible desde el propio host.
+    # Cambiar a "20128:20128" (sin prefijo de IP) para exponer en la LAN
+    # -- ver docs/04-guia-de-uso.md antes de hacerlo.
+    ports:
+      - "127.0.0.1:20128:20128"
+    env_file:
+      - .env
+    environment:
+      # Fijas: no deben venir de .env para evitar romper el mapeo del volumen/puerto.
+      DATA_DIR: /app/data
+      PORT: "20128"
+      HOSTNAME: "0.0.0.0"
+      # Solo se usa si el servicio "headroom" de abajo esta activo (perfil "headroom").
+      HEADROOM_URL: http://headroom:8787
+    volumes:
+      - 9router-data:/app/data
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:20128/"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+  # Sidecar OPCIONAL de compresion de tokens ("Token Saver"). No se incluye en
+  # la imagen de 9Router. Vive bajo el profile "headroom": con `compose up -d`
+  # normal este servicio NO se levanta. Para incluirlo:
+  #   docker compose --profile headroom up -d
+  #   podman compose --profile headroom up -d
+  # o via scripts/9router.sh|ps1 start --with-headroom
+  #
+  # Para no usarlo nunca, simplemente no pases --profile headroom
+  # (ni el flag --with-headroom de los scripts) y este bloque queda inerte.
+  headroom:
+    image: ghcr.io/chopratejas/headroom:latest
+    container_name: headroom
+    restart: unless-stopped
+    profiles:
+      - headroom
+    # Sin publicar puerto al host por defecto (solo alcanzable dentro de la red
+    # interna de compose como http://headroom:8787). Descomentar solo para depurar:
+    # ports:
+    #   - "127.0.0.1:8787:8787"
+
+volumes:
+  9router-data:
+    name: 9router-data

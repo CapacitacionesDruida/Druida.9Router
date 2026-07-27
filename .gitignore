@@ -1,0 +1,17 @@
+# Secretos y configuracion local -- nunca versionar
+.env
+.env.*
+!.env.example
+
+# Backups generados localmente
+backups/*
+!backups/.gitkeep
+
+# Datos si alguna vez se usa un bind mount local en vez del volumen nombrado
+/data/
+
+# Editores / SO
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
