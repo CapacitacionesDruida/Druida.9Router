@@ -176,12 +176,57 @@ Recomendación: correr `backup` antes de cada `update`, y de forma periódica v�
 
 ## 7. Actualizar a la última versión
 
+### 7.1. Solo 9Router (caso habitual)
+
 ```bash
-./scripts/9router.sh backup
+./scripts/9router.sh backup    # respaldo previo recomendado
 ./scripts/9router.sh update
 ```
 
-Verificá en el dashboard que la versión, los proveedores y los combos siguen intactos.
+```powershell
+.\scripts\9router.ps1 backup
+.\scripts\9router.ps1 update
+```
+
+### 7.2. 9Router + Headroom (si tenés el sidecar activo)
+
+Si levantaste el stack con `--with-headroom`, actualizá pasando el mismo flag para que también se actualice ese contenedor:
+
+```bash
+./scripts/9router.sh backup
+./scripts/9router.sh update --with-headroom
+```
+
+```powershell
+.\scripts\9router.ps1 backup
+.\scripts\9router.ps1 update --with-headroom
+```
+
+Si omitís `--with-headroom` en el `update` habiendo levantado el stack con headroom activo, el contenedor `headroom` simplemente no se toca (no se actualiza, pero tampoco se detiene).
+
+### 7.3. Qué hace `update` exactamente
+
+`cmd_update` (en `scripts/9router.sh`/`9router.ps1`) ejecuta dos pasos:
+
+1. `compose pull` — descarga la imagen más reciente de `decolua/9router:latest` (y de `ghcr.io/chopratejas/headroom:latest` si se pasó `--with-headroom`).
+2. `compose up -d --force-recreate` — destruye los contenedores actuales y crea unos nuevos a partir de las imágenes recién descargadas.
+
+### 7.4. Por qué el volumen `9router-data` no se ve afectado
+
+En `compose.yml`, el volumen se declara como **volumen nombrado** (no bind mount):
+
+```yaml
+volumes:
+  - 9router-data:/app/data
+```
+
+`--force-recreate` recrea el **contenedor**, no el **volumen**. Docker/Podman solo eliminan un volumen nombrado si se lo pide explícitamente (`compose down -v`, o `docker/podman volume rm 9router-data`) — algo que ningún comando de `9router.sh`/`9router.ps1` hace. Al recrear el contenedor, el nuevo simplemente vuelve a montar el mismo volumen `9router-data` con todos los datos (proveedores, combos, API keys, historial) intactos.
+
+Verificá igual en el dashboard, después de cada `update`, que la versión, los proveedores y los combos siguen intactos.
+
+### 7.5. Rollback si algo sale mal
+
+Si la nueva versión presenta problemas, podés volver a una imagen anterior fijando el tag en `compose.yml` (en vez de `:latest`, ej. `decolua/9router:1.2.3`) y corriendo `update` de nuevo. El volumen `9router-data` no se ve afectado por este cambio de tag.
 
 ## 8. Sidecar opcional: Headroom (compresión de tokens)
 

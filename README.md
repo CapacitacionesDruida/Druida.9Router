@@ -21,6 +21,26 @@ chmod +x scripts/9router.sh
 
 Abrí `http://localhost:20128`, iniciá sesión con la contraseña que imprimió `setup` y cambiala desde el dashboard. Después seguí la [guía de uso](docs/04-guia-de-uso.md) para dar de alta tus proveedores y conectar tus clientes.
 
+## Actualizar 9Router (y Headroom, si lo usás)
+
+El comando `update` descarga la imagen más reciente y **recrea** el contenedor, sin tocar el volumen de datos `9router-data` (los datos viven en un volumen nombrado, independiente del ciclo de vida del contenedor):
+
+```bash
+# Linux / Mac / WSL / Git Bash
+./scripts/9router.sh backup           # respaldo previo recomendado
+./scripts/9router.sh update           # solo 9Router
+./scripts/9router.sh update --with-headroom   # 9Router + sidecar Headroom, si lo tenés activo
+```
+
+```powershell
+# Windows
+.\scripts\9router.ps1 backup
+.\scripts\9router.ps1 update
+.\scripts\9router.ps1 update --with-headroom
+```
+
+Internamente `update` corre `compose pull` + `compose up -d --force-recreate`: se descartan los contenedores viejos y se crean nuevos a partir de la imagen actualizada, pero el volumen `9router-data` (declarado como `volumes: - 9router-data:/app/data` en `compose.yml`) **no se elimina ni se recrea** — solo se vuelve a montar en el contenedor nuevo. Verificá en el dashboard que la versión, los proveedores y los combos siguen intactos después de actualizar. Detalle completo en la [guía de uso, sección 7](docs/04-guia-de-uso.md#7-actualizar-a-la-última-versión).
+
 ## Documentación
 
 | Documento | Contenido |
