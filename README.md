@@ -11,12 +11,14 @@ Funciona indistintamente con **Docker** o **Podman** — el mismo `compose.yml` 
 chmod +x scripts/9router.sh
 ./scripts/9router.sh setup
 ./scripts/9router.sh start
+./scripts/9router.sh start --with-headroom   # 9Router + sidecar Headroom
 ```
 
 ```powershell
 # Windows
 .\scripts\9router.ps1 setup
 .\scripts\9router.ps1 start
+.\scripts\9router.ps1 start --with-headroom   # 9Router + sidecar Headroom
 ```
 
 Abrí `http://localhost:20128`, iniciá sesión con la contraseña que imprimió `setup` y cambiala desde el dashboard. Después seguí la [guía de uso](docs/04-guia-de-uso.md) para dar de alta tus proveedores y conectar tus clientes.
@@ -36,7 +38,7 @@ El comando `update` descarga la imagen más reciente y **recrea** el contenedor,
 # Windows
 .\scripts\9router.ps1 backup
 .\scripts\9router.ps1 update
-.\scripts\9router.ps1 update --with-headroom
+.\scripts\9router.ps1 update --with-headroom # 9Router + sidecar Headroom, si lo tenés activo
 ```
 
 Internamente `update` corre `compose pull` + `compose up -d --force-recreate`: se descartan los contenedores viejos y se crean nuevos a partir de la imagen actualizada, pero el volumen `9router-data` (declarado como `volumes: - 9router-data:/app/data` en `compose.yml`) **no se elimina ni se recrea** — solo se vuelve a montar en el contenedor nuevo. Verificá en el dashboard que la versión, los proveedores y los combos siguen intactos después de actualizar. Detalle completo en la [guía de uso, sección 7](docs/04-guia-de-uso.md#7-actualizar-a-la-última-versión).
