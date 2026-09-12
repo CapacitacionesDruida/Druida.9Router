@@ -1,0 +1,26 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:9router.com)",
+      "WebFetch(domain:github.com)",
+      "Bash(gh api *)",
+      "PowerShell(cd \"E:\\\\02-Working\\\\Druida\\\\Druida.9Router\"; powershell -NoProfile -File .\\\\scripts\\\\9router.ps1 help)",
+      "PowerShell(cd \"E:\\\\02-Working\\\\Druida\\\\Druida.9Router\"; powershell -NoProfile -File .\\\\scripts\\\\9router.ps1 setup; Get-Content .env | Select-Object -First 8)",
+      "Bash(gh repo *)",
+      "Bash(git mv *)",
+      "Bash(mv docker-compose.yml compose.yml)",
+      "Bash(rm -f docker-compose.headroom.yml)",
+      "Bash(docker compose *)",
+      "Bash(bash -n scripts/9router.sh)",
+      "PowerShell(cd \"E:\\\\02-Working\\\\Druida\\\\Druida.9Router\"; $null = [System.Management.Automation.PSParser]::Tokenize\\(\\(Get-Content .\\\\scripts\\\\9router.ps1 -Raw\\), [ref]$null\\); powershell -NoProfile -File .\\\\scripts\\\\9router.ps1 help | Select-Object -First 3)",
+      "Bash(git init *)",
+      "Bash(git remote *)",
+      "Bash(git fetch *)",
+      "Bash(git checkout *)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(git push *)",
+      "Bash(gh auth *)"
+    ]
+  }
+}

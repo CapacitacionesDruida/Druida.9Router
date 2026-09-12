@@ -49,6 +49,7 @@ Internamente `update` corre `compose pull` + `compose up -d --force-recreate`: s
 | [docs/02-especificacion-tecnica.md](docs/02-especificacion-tecnica.md) | Arquitectura, variables de entorno, persistencia, seguridad, compatibilidad Docker/Podman |
 | [docs/03-plan-trabajo.md](docs/03-plan-trabajo.md) | Plan de trabajo a bajo nivel, fase por fase |
 | [docs/04-guia-de-uso.md](docs/04-guia-de-uso.md) | Comandos, alta de proveedores, conexión de clientes, backup/restore, troubleshooting |
+| [docs/05-api-administracion.md](docs/05-api-administracion.md) | Referencia de la API interna de administración (auth, usage, providers, settings, combos, keys, OAuth, CLI tools) — para scripting/monitoreo más allá de `/v1/*` |
 
 ## Estructura del repositorio
 
